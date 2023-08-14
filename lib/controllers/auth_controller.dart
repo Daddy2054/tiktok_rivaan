@@ -3,9 +3,27 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tiktok/constants.dart';
+import 'package:tiktok/models/user.dart' as model;
 
 class AuthController extends GetxController {
+  static AuthController instance = Get.find();
+
+  late Rx<File?> _pickedImage;
+
+  File? get ProfilePhoto => _pickedImage.value;
+
+  void pickImage() async {
+    final pickedImage = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedImage != null) {
+      Get.snackbar('Profile Picture',
+          'You have successfully selected your profile picture!');
+    }
+    _pickedImage = Rx<File?>(File(pickedImage!.path));
+  }
   //upload to firebase storage
 
   Future<String> _uploadToStorage(File image) async {
@@ -22,7 +40,7 @@ class AuthController extends GetxController {
 
   //registering user
   //
-  void registeringUser(
+  void registerUser(
     String username,
     String email,
     String password,
@@ -39,10 +57,47 @@ class AuthController extends GetxController {
           password: password,
         );
         String downloadUrl = await _uploadToStorage(image);
+        model.User user = model.User(
+          name: username,
+          profilePhoto: downloadUrl,
+          email: email,
+          uid: cred.user!.uid,
+        );
+        await firestore
+            .collection('users')
+            .doc(cred.user!.uid)
+            .set(user.toMap());
+      } else {
+        Get.snackbar(
+          'Error Creating Account',
+          'Please enter all the fields',
+        );
       }
     } catch (e) {
       Get.snackbar(
         'Error Creating Account',
+        e.toString(),
+      );
+    }
+  }
+
+  void loginUser(String email, String password) async {
+    try {
+      if (email.isNotEmpty && password.isNotEmpty) {
+        await firebaseAuth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        print('logging succeeded');
+      } else {
+        Get.snackbar(
+          'Error Logging into Account',
+          'Please enter all the fields',
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error Logging into Account',
         e.toString(),
       );
     }

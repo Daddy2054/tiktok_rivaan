@@ -12,7 +12,7 @@ class TextInputField extends StatelessWidget {
     Key? key,
     required this.controller,
     required this.labelText,
-     this.isObscure =false,
+    this.isObscure = false,
     required this.icon,
   }) : super(key: key);
 
@@ -23,14 +23,14 @@ class TextInputField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: labelText,
         prefixIcon: Icon(icon),
-        labelStyle: TextStyle(fontSize: 20),
+        labelStyle: const TextStyle(fontSize: 20),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: borderColor),
+          borderSide: const BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: borderColor),
+          borderSide: const BorderSide(color: borderColor),
         ),
       ),
       obscureText: isObscure,
