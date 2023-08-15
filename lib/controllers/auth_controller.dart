@@ -14,7 +14,7 @@ class AuthController extends GetxController {
   late Rx<User?> _user;
   late Rx<File?> _pickedImage;
 
-  File? get ProfilePhoto => _pickedImage.value;
+  File? get profilePhoto => _pickedImage.value;
 
   @override
   void onReady() {
@@ -28,7 +28,7 @@ class AuthController extends GetxController {
     if (user == null) {
       Get.offAll(() => LoginScreen());
     } else {
-      Get.offAll(() => HomeScreen());
+      Get.offAll(() => const HomeScreen());
     }
   }
 
