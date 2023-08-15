@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tiktok/constants.dart';
@@ -7,13 +9,22 @@ class AddVideoScreen extends StatelessWidget {
   const AddVideoScreen({super.key});
 
   pickVideo(ImageSource src, BuildContext context) async {
-    final video = await ImagePicker().pickVideo(source: src);
-    if (video != null) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const ConfirmScreen(),
-        ),
-      );
+    final video = await ImagePicker().pickVideo(
+      source: src,
+      maxDuration: const Duration(seconds: 10),
+    );
+
+    if (context.mounted) {
+      if (video != null) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ConfirmScreen(
+              videoFile: File(video.path),
+              videoPath: video.path,
+            ),
+          ),
+        );
+      }
     }
   }
 
